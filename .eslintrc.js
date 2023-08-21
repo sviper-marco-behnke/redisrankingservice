@@ -39,10 +39,6 @@ module.exports = {
     "rest-spread-spacing": ["error", "never"],
     "func-call-spacing": ["error", "never"],
     "template-curly-spacing": ["error", "never"],
-    "array-bracket-spacing": ["error", "never"],
-    "mocha/no-hooks-for-single-case": "off",
-    "mocha/no-pending-tests": "warn",
-    "mocha/no-exclusive-tests": "error",
-    "mocha/no-skipped-tests": "error"
+    "array-bracket-spacing": ["error", "never"]
   }
 };
