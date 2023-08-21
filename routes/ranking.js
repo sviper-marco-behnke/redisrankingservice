@@ -2,18 +2,18 @@ const express = require("express");
 const router = express.Router();
 const { createClient } = require("redis");
 
-router.get("/list/:from/:to", async function(req, res, next) {
-  const result = await getRanking(req.params.from, req.params.to);
+router.get("/list/:experience/:from/:to", async function(req, res, next) {
+  const result = await getRanking(req.params.experience, req.params.from, req.params.to);
   res.json(result);
 });
 
-router.get("/user/:user", async function(req, res, next) {
-  const result = await getPosition(req.params.user);
+router.get("/user/:experience/:user", async function(req, res, next) {
+  const result = await getPosition(req.params.experience, req.params.user);
   res.json(result); // zero index based
 });
 
-router.post("/score/:user/:score", async function(req, res, next) {
-  const result = await postScore(req.params.user, req.params.score);
+router.post("/score/:experience/:user/:score", async function(req, res, next) {
+  const result = await postScore(req.params.experience, req.params.user, req.params.score);
   const from = Math.max(result - 1, 0);
   const to = from <= 0 ? 2 : result +1;
 
@@ -23,9 +23,9 @@ router.post("/score/:user/:score", async function(req, res, next) {
   });
 });
 
-async function getRanking(from, to) {
+async function getRanking(experience, from, to) {
   const client = await createRedisClient();
-  const result = await client.zRangeWithScores("ranking_01", from, to);
+  const result = await client.zRangeWithScores(experience, from, to);
 
   let position = from;
   return result.map(item => {
@@ -34,16 +34,16 @@ async function getRanking(from, to) {
   });
 }
 
-async function getPosition(user) {
+async function getPosition(experience, user) {
   const client = await createRedisClient();
-  const result = await client.zRank("ranking_01", user);
+  const result = await client.zRank(experience, user);
   return result + 1; // zero index based
 }
 
-async function postScore(user, score) {
+async function postScore(experience, user, score) {
   const client = await createRedisClient();
 
-  await client.zAdd("ranking_01", [{ score: score, value: user }]);
+  await client.zAdd(experience, [{ score: score, value: user }]);
   return await client.zRank("ranking_01", user);
 }
 
